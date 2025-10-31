@@ -1,0 +1,83 @@
+{
+	"info": {
+		"_postman_id": "8ee9a646-0be3-418f-a345-3e5a381198b9",
+		"name": "EventPlanner - Phase 0",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44463196",
+		"_collection_link": "https://youssefhisham-5952725.postman.co/workspace/Youssef-Hisham's-Workspace~e57b0df5-a486-4f92-808b-f35c9a9fda7d/collection/44463196-8ee9a646-0be3-418f-a345-3e5a381198b9?action=share&source=collection_link&creator=44463196"
+	},
+	"item": [
+		{
+			"name": "Sign Up",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"ahmed@example.com\",\n    \"password\": \"2222\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/auth/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"auth",
+						"signup"
+					]
+				},
+				"description": "Create a new user account."
+			},
+			"response": []
+		},
+		{
+			"name": "Log In",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"ahmed@example.com\",\n    \"password\": \"2222\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"auth",
+						"login"
+					]
+				},
+				"description": "Log in an existing user and get a JWT."
+			},
+			"response": []
+		}
+	]
+}
