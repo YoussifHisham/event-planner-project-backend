@@ -1,0 +1,370 @@
+{
+	"info": {
+		"_postman_id": "7c378935-ea7c-427e-b22c-84d9eb083831",
+		"name": "EventPlanner - Phase 1 (Event Management)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44463196",
+		"_collection_link": "https://youssefhisham-5952725.postman.co/workspace/Youssef-Hisham's-Workspace~e57b0df5-a486-4f92-808b-f35c9a9fda7d/collection/44463196-7c378935-ea7c-427e-b22c-84d9eb083831?action=share&source=collection_link&creator=44463196"
+	},
+	"item": [
+		{
+			"name": "1. Auth",
+			"item": [
+				{
+					"name": "Sign Up (Organizer)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"organizer@test.com\",\n    \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/auth/signup",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign Up (Attendee)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"attendee@test.com\",\n    \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/auth/signup",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Log In (Organizer)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"organizer@test.com\",\n    \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Log In (Attendee)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"attendee@test.com\",\n    \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Events",
+			"item": [
+				{
+					"name": "Create Event",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "token",
+								"value": "",
+								"description": "PASTE ORGANIZER TOKEN HERE",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"End of Year Party\",\n    \"date\": \"2023-12-31\",\n    \"time\": \"20:00\",\n    \"location\": \"Main Hall\",\n    \"description\": \"Celebration time!\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/events",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"events"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Organized Events",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "",
+								"description": "PASTE ORGANIZER TOKEN HERE",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/events/organized",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"events",
+								"organized"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Invited Events",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "",
+								"description": "PASTE ATTENDEE TOKEN HERE",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/events/invited",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"events",
+								"invited"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invite User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI3MzU3OTUyZC0xOTYyLTQ3NzYtYjc3ZC0yODAxMjhkY2YzMjQiLCJpYXQiOjE3NjQwOTY3ODYsImV4cCI6MTc2NDEwMDM4Nn0.zd30ZocMomgSQ7wRRlDD2KWihQ0bUoUXhP9MpN_obN0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"attendee1@test.com\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/events/44f7262e-b655-4fb6-acb3-576571263917/invite",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"events",
+								"44f7262e-b655-4fb6-acb3-576571263917",
+								"invite"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Event",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI3MzU3OTUyZC0xOTYyLTQ3NzYtYjc3ZC0yODAxMjhkY2YzMjQiLCJpYXQiOjE3NjQwOTMwMzEsImV4cCI6MTc2NDA5NjYzMX0.5kRbfacT6JnU-iEEX7JUQsBkRfyWWwg5h2orR0QxsnQ",
+								"description": "PASTE ORGANIZER TOKEN HERE",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/events/07a6c4ca-a6fd-42cc-b477-fa345cdd2410",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"events",
+								"07a6c4ca-a6fd-42cc-b477-fa345cdd2410"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Attendee Responds",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI3MzU3OTUyZC0xOTYyLTQ3NzYtYjc3ZC0yODAxMjhkY2YzMjQiLCJpYXQiOjE3NjQwOTY3ODYsImV4cCI6MTc2NDEwMDM4Nn0.zd30ZocMomgSQ7wRRlDD2KWihQ0bUoUXhP9MpN_obN0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/events/44f7262e-b655-4fb6-acb3-576571263917/attendees",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"events",
+								"44f7262e-b655-4fb6-acb3-576571263917",
+								"attendees"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Attendee Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwNjU4OGM1YS04ZGRmLTQ4ZWUtOGY5Ny00NDNkZTc4NmU2YTAiLCJpYXQiOjE3NjQwOTU1OTMsImV4cCI6MTc2NDA5OTE5M30.AUZsihEhEihzkOu1bJIVh_zxOmVwXPoHucR4Jbl_Gz8",
+								"description": "PASTE ATTENDEE TOKEN HERE",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"status\": \"Maybe\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/events/44f7262e-b655-4fb6-acb3-576571263917/response",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"events",
+								"44f7262e-b655-4fb6-acb3-576571263917",
+								"response"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

@@ -4,6 +4,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./routes/auth');
+const eventRoutes = require('./routes/events'); 
 
 // --- App Initialization ---
 const app = express();
@@ -18,8 +19,8 @@ app.use(cors());
 app.use(express.json());
 
 // --- Routes ---
-// Mount the authentication routes under the '/auth' path
 app.use('/auth', authRoutes);
+app.use('/events', eventRoutes); 
 
 // --- Server Startup ---
 app.listen(PORT, () => {
