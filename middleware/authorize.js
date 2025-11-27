@@ -1,24 +1,39 @@
-const jwt = require("jsonwebtoken");
-require("dotenv").config();
+// const jwt = require("jsonwebtoken");
+// require("dotenv").config();
 
-module.exports = async (req, res, next) => {
-  try {
-    // 1. Get the token from the header
-    const token = req.header("token");
+// module.exports = async (req, res, next) => {
+//   try {
+//     // 1. Get the token from the header
+//     const token = req.header("token");
+//     if (!token) {
+//       return res.status(403).json({ message: "Authorization Denied. No token provided." });
+//     }
+//     // 2. Verify the token
+//     const payload = jwt.verify(token, process.env.JWT_SECRET);
 
-    if (!token) {
-      return res.status(403).json({ message: "Authorization Denied. No token provided." });
-    }
-
-    // 2. Verify the token
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
-
-    // 3. Attach the user info (user_id) to the request object
-    req.user = payload;
+//     // 3. Attach the user info (user_id) to the request object
+//     req.user = payload;
     
-    // 4. Continue to the next step (the controller)
+//     // 4. Continue to the next step (the controller)
+//     next();
+//   } catch (err) {
+//     res.status(401).json({ message: "Token is not valid" });
+//   }
+// };
+const jwt = require("jsonwebtoken");
+
+module.exports = function (req, res, next) {
+  const authHeader = req.header("Authorization");
+  if (!authHeader) return res.status(401).json({ message: "No token" });
+
+  const token = authHeader.replace("Bearer ", "");
+  if (!token) return res.status(401).json({ message: "No token" });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // This is what your controllers expect
     next();
   } catch (err) {
-    res.status(401).json({ message: "Token is not valid" });
+    res.status(403).json({ message: "Invalid token" });
   }
 };

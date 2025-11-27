@@ -1,6 +1,5 @@
 // Load environment variables
 require('dotenv').config();
-
 const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./routes/auth');
@@ -8,13 +7,16 @@ const eventRoutes = require('./routes/events');
 
 // --- App Initialization ---
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
 
 // --- Middleware ---
 // Enable Cross-Origin Resource Sharing (CORS)
 // This allows your React frontend to make requests to this backend
-app.use(cors()); 
 
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
 // Parse incoming JSON requests
 app.use(express.json());
 

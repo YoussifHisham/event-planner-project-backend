@@ -1,17 +1,34 @@
 const db = require('../db');
 
 //1. Create a New Event 
+// exports.createEvent = async (req, res) => {
+//   try {
+//     const { title, date, time, location, description } = req.body;
+    
+//     // When you create an event, you automatically become the 'organizer_id'
+//     const newEvent = await db.query(
+//       "INSERT INTO events (organizer_id, title, date, time, location, description) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+//       [req.user.userId, title, date, time, location, description]
+//     );
+
+//     res.json({ message: "Event created!", event: newEvent.rows[0] });
+//   } catch (err) {
+//     console.error(err.message);
+//     res.status(500).send("Server Error");
+//   }
+// };
 exports.createEvent = async (req, res) => {
   try {
     const { title, date, time, location, description } = req.body;
     
-    // When you create an event, you automatically become the 'organizer_id'
     const newEvent = await db.query(
       "INSERT INTO events (organizer_id, title, date, time, location, description) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
       [req.user.userId, title, date, time, location, description]
     );
 
-    res.json({ message: "Event created!", event: newEvent.rows[0] });
+    // CHANGE THIS LINE ONLY
+    res.status(201).json(newEvent.rows[0]);  // ← Return just the event
+    // NOT: res.json({ message: "...", event: ... })
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
