@@ -1,245 +1,218 @@
 const db = require('../db');
 
-//1. Create a New Event 
-// exports.createEvent = async (req, res) => {
-//   try {
-//     const { title, date, time, location, description } = req.body;
-    
-//     // When you create an event, you automatically become the 'organizer_id'
-//     const newEvent = await db.query(
-//       "INSERT INTO events (organizer_id, title, date, time, location, description) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-//       [req.user.userId, title, date, time, location, description]
-//     );
-
-//     res.json({ message: "Event created!", event: newEvent.rows[0] });
-//   } catch (err) {
-//     console.error(err.message);
-//     res.status(500).send("Server Error");
-//   }
-// };
 exports.createEvent = async (req, res) => {
   try {
     const { title, date, time, location, description } = req.body;
-    
+
     const newEvent = await db.query(
       "INSERT INTO events (organizer_id, title, date, time, location, description) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
       [req.user.userId, title, date, time, location, description]
     );
 
-    // CHANGE THIS LINE ONLY
-    res.status(201).json(newEvent.rows[0]);  // ← Return just the event
-    // NOT: res.json({ message: "...", event: ... })
+    const eventId = newEvent.rows[0].event_id;
+
+    await db.query(
+      `INSERT INTO event_attendees (event_id, user_id, status) 
+       VALUES ($1, $2, 'Going')
+       ON CONFLICT DO NOTHING`,
+      [eventId, req.user.userId]
+    );
+
+    res.status(201).json(newEvent.rows[0]);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
-// 2. View Events I Organized 
 exports.getMyEvents = async (req, res) => {
   try {
-    const myEvents = await db.query(
-      "SELECT * FROM events WHERE organizer_id = $1 ORDER BY created_at DESC",
+    const result = await db.query(
+      "SELECT *, 'organizer' as role FROM events WHERE organizer_id = $1 ORDER BY created_at DESC",
       [req.user.userId]
     );
-    
-    const eventsWithRole = myEvents.rows.map(event => ({ ...event, role: "organizer" }));
-
-    res.json(eventsWithRole);
+    res.json(result.rows);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
-// --- 3. View Events I am Invited To ---
 exports.getInvitedEvents = async (req, res) => {
   try {
-    const invitedEvents = await db.query(
-      `SELECT e.*, ea.status 
-       FROM events e 
-       JOIN event_attendees ea ON e.event_id = ea.event_id 
-       WHERE ea.user_id = $1`,
+    const result = await db.query(
+      `SELECT e.*,
+              ea.status,
+              CASE WHEN e.organizer_id = $1 THEN 'organizer' ELSE 'attendee' END as role
+       FROM events e
+       JOIN event_attendees ea ON e.event_id = ea.event_id
+       WHERE ea.user_id = $1
+       ORDER BY e.created_at DESC`,
       [req.user.userId]
     );
-
-    const eventsWithRole = invitedEvents.rows.map(event => ({ ...event, role: "attendee" }));
-
-    res.json(eventsWithRole);
+    res.json(result.rows);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
-// 4. Invite User to Event (UPDATED FOR SECURITY) 
 exports.inviteUser = async (req, res) => {
   try {
     const { event_id } = req.params;
-    const { email } = req.body; 
-    const organizerCheck = await db.query(
-        "SELECT * FROM events WHERE event_id = $1 AND organizer_id = $2",
-        [event_id, req.user.userId]
+    const { email } = req.body;
+
+    const eventCheck = await db.query(
+      "SELECT organizer_id FROM events WHERE event_id = $1",
+      [event_id]
     );
 
-    if (organizerCheck.rows.length === 0) {
-        return res.status(403).json({ message: "Permission denied. Only the organizer can invite users." });
+    if (eventCheck.rows.length === 0 || eventCheck.rows[0].organizer_id !== req.user.userId) {
+      return res.status(403).json({ message: "Only the organizer can invite users" });
     }
 
-    // A. Find the user id based on email
-    const userToInvite = await db.query("SELECT user_id FROM users WHERE user_email = $1", [email]);
-    
-    if (userToInvite.rows.length === 0) {
+    const userResult = await db.query(
+      "SELECT user_id FROM users WHERE user_email = $1",
+      [email]
+    );
+
+    if (userResult.rows.length === 0) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const inviteeId = userToInvite.rows[0].user_id;
+    const attendeeId = userResult.rows[0].user_id;
 
-    // B. Check if already invited
-    const check = await db.query("SELECT * FROM event_attendees WHERE event_id = $1 AND user_id = $2", [event_id, inviteeId]);
-    if (check.rows.length > 0) {
-      return res.status(400).json({ message: "User already invited" });
-    }
-
-    // C. Add to table
     await db.query(
-      "INSERT INTO event_attendees (event_id, user_id) VALUES ($1, $2)",
-      [event_id, inviteeId]
+      `INSERT INTO event_attendees (event_id, user_id, status) 
+       VALUES ($1, $2, 'pending') 
+       ON CONFLICT (event_id, user_id) DO NOTHING`,
+      [event_id, attendeeId]
     );
 
-    res.json({ message: "User invited successfully" });
+    res.json({ message: "Invitation sent successfully" });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+    console.error("Invite error:", err.message);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-// 5. Delete Event 
 exports.deleteEvent = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const deleteOp = await db.query(
+    const result = await db.query(
       "DELETE FROM events WHERE event_id = $1 AND organizer_id = $2 RETURNING *",
       [id, req.user.userId]
     );
 
-    if (deleteOp.rows.length === 0) {
-      return res.status(403).json({ message: "This event does not exist or you are not the organizer" });
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Event not found or not authorized" });
     }
 
-    res.json({ message: "Event deleted" });
+    res.json({ message: "Event deleted successfully" });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
-// 6. Respond to Event (Attendee)
 exports.respondToEvent = async (req, res) => {
   try {
-    const { id } = req.params; // The Event ID
-    const { status } = req.body; // 'Going', 'Maybe', 'Not Going'
+    const { id } = req.params;
+    const { status } = req.body;
 
-    const validStatuses = ['Going', 'Maybe', 'Not Going'];
-    if (!validStatuses.includes(status)) {
-        return res.status(400).json({ message: "Invalid status. Must be 'Going', 'Maybe', or 'Not Going'." });
+    const valid = ['Going', 'Maybe', 'Not Going'];
+    if (!valid.includes(status)) {
+      return res.status(400).json({ message: "Invalid status" });
     }
 
-    const updateOp = await db.query(
-      "UPDATE event_attendees SET status = $1 WHERE event_id = $2 AND user_id = $3 RETURNING *",
+    const result = await db.query(
+      "UPDATE event_attendees SET status = $1 WHERE event_id = $2 AND user_id = $3 RETURNING status",
       [status, id, req.user.userId]
     );
 
-    if (updateOp.rows.length === 0) {
-        return res.status(404).json({ message: "You are not invited to this event." });
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Not invited to this event" });
     }
 
-    res.json({ message: "Status updated", status: updateOp.rows[0].status });
+    res.json({ message: "Response recorded", status });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
-// 7. Get Event Attendees (Organizer Only) 
 exports.getEventAttendees = async (req, res) => {
-    try {
-        const { id } = req.params; // The Event ID
-        const eventCheck = await db.query("SELECT * FROM events WHERE event_id = $1 AND organizer_id = $2", [id, req.user.userId]);
-        if (eventCheck.rows.length === 0) {
-            return res.status(403).json({ message: "You are not the organizer of this event." });
-        }
+  try {
+    const { id } = req.params;
 
-        const attendees = await db.query(
-            `SELECT u.user_id, u.user_email, ea.status
-             FROM event_attendees ea
-             JOIN users u ON ea.user_id = u.user_id
-             WHERE ea.event_id = $1`,
-            [id]
-        );
+    const check = await db.query(
+      "SELECT 1 FROM events WHERE event_id = $1 AND organizer_id = $2",
+      [id, req.user.userId]
+    );
 
-        res.json(attendees.rows);
-
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send("Server Error");
+    if (check.rows.length === 0) {
+      return res.status(403).json({ message: "Not authorized" });
     }
+
+    const attendees = await db.query(
+      `SELECT u.user_email, ea.status 
+       FROM event_attendees ea 
+       JOIN users u ON ea.user_id = u.user_id 
+       WHERE ea.event_id = $1`,
+      [id]
+    );
+
+    res.json(attendees.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: "Server Error" });
+  }
 };
 
-// 8. Search and Filter Events 
 exports.searchEvents = async (req, res) => {
   try {
     const { keyword, startDate, endDate, role } = req.query;
 
     let query = `
       SELECT DISTINCT e.*, 
-      CASE WHEN e.organizer_id = $1 THEN 'organizer' ELSE 'attendee' END as role
+             CASE WHEN e.organizer_id = $1 THEN 'organizer' ELSE 'attendee' END as role
       FROM events e
       LEFT JOIN event_attendees ea ON e.event_id = ea.event_id
-      WHERE (e.organizer_id = $1 OR ea.user_id = $1)
+      WHERE e.organizer_id = $1 OR ea.user_id = $1
     `;
 
-    // Prepare parameters array (starts with User ID at index $1)
-    const queryParams = [req.user.userId];
-    let paramIndex = 2; // Next param will be $2
+    const params = [req.user.userId];
+    let index = 2;
 
-    //Add Dynamic Filters
-    // Filter by Keyword (Title or Description)
     if (keyword) {
-      query += ` AND (e.title ILIKE $${paramIndex} OR e.description ILIKE $${paramIndex})`;
-      queryParams.push(`%${keyword}%`); 
-      paramIndex++;
+      query += ` AND (e.title ILIKE $${index} OR e.description ILIKE $${index})`;
+      params.push(`%${keyword}%`);
+      index++;
     }
-    // Filter by Date Range
     if (startDate) {
-      query += ` AND e.date >= $${paramIndex}`;
-      queryParams.push(startDate);
-      paramIndex++;
+      query += ` AND e.date >= $${index}`;
+      params.push(startDate);
+      index++;
     }
     if (endDate) {
-      query += ` AND e.date <= $${paramIndex}`;
-      queryParams.push(endDate);
-      paramIndex++;
+      query += ` AND e.date <= $${index}`;
+      params.push(endDate);
+      index++;
     }
-
-    // Filter by Role 
-    if (role === 'organizer') {
+    if (role === "organizer") {
       query += ` AND e.organizer_id = $1`;
-    } else if (role === 'attendee') {
+    } else if (role === "attendee") {
       query += ` AND ea.user_id = $1 AND e.organizer_id != $1`;
     }
 
-    // 5. Add Sorting
     query += ` ORDER BY e.date ASC`;
 
-    // 6. Execute Query
-    const results = await db.query(query, queryParams);
-
-    res.json(results.rows);
+    const result = await db.query(query, params);
+    res.json(result.rows);
 
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).json({ message: "Server Error" });
   }
 };

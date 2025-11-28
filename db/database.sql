@@ -28,3 +28,5 @@ CREATE TABLE event_attendees (
   status VARCHAR(50) DEFAULT 'invited', -- 'invited', 'going', 'maybe', 'not_going'
   PRIMARY KEY (event_id, user_id)
 );
+-- Add role column to users table (safe to run multiple times)
+ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'attendee';
