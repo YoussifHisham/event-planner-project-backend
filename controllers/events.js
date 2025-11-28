@@ -46,7 +46,7 @@ exports.getInvitedEvents = async (req, res) => {
               CASE WHEN e.organizer_id = $1 THEN 'organizer' ELSE 'attendee' END as role
        FROM events e
        JOIN event_attendees ea ON e.event_id = ea.event_id
-       WHERE ea.user_id = $1
+       WHERE ea.user_id = $1 AND e.organizer_id != $1
        ORDER BY e.created_at DESC`,
       [req.user.userId]
     );
