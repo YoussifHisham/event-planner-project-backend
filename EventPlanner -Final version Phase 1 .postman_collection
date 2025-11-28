@@ -1,0 +1,547 @@
+{
+	"info": {
+		"_postman_id": "6ff73234-136d-49af-a690-7f4a1cae7855",
+		"name": "EventPlanner - Phase 1 Final",
+		"description": "Final collection with Organizer Role support.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44463196",
+		"_collection_link": "https://youssefhisham-5952725.postman.co/workspace/Youssef-Hisham's-Workspace~e57b0df5-a486-4f92-808b-f35c9a9fda7d/collection/44463196-6ff73234-136d-49af-a690-7f4a1cae7855?action=share&source=collection_link&creator=44463196"
+	},
+	"item": [
+		{
+			"name": "1. Auth",
+			"item": [
+				{
+					"name": "Sign Up (Organizer)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"omar1@test.com\",\n    \"password\": \"123456\",\n    \"role\": \"organizer\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/auth/signup",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign Up (Attendee)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"hisham@test.com\",\n    \"password\": \"123456\",\n    \"role\": \"attendee\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/auth/signup",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Log In (Organizer)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"token\", jsonData.token);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"omar1@test.com\",\n    \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Log In (Attendee)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"token\", jsonData.token);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"hisham@test.com\",\n    \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Event Management",
+			"item": [
+				{
+					"name": "Create Event",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMWIwYTdjZi03OGIzLTQzNDItYjRiOS1mMzljN2M4MDhlYjUiLCJlbWFpbCI6Im9tYXIxQHRlc3QuY29tIiwicm9sZSI6Im9yZ2FuaXplciIsImlhdCI6MTc2NDM0NTMyNCwiZXhwIjoxNzY0OTUwMTI0fQ.FHDBX2qDEcaMzLx4k4mzWsl3UvVe810a5YmM6XMsmwI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMWIwYTdjZi03OGIzLTQzNDItYjRiOS1mMzljN2M4MDhlYjUiLCJlbWFpbCI6Im9tYXIxQHRlc3QuY29tIiwicm9sZSI6Im9yZ2FuaXplciIsImlhdCI6MTc2NDM0NTMyNCwiZXhwIjoxNzY0OTUwMTI0fQ.FHDBX2qDEcaMzLx4k4mzWsl3UvVe810a5YmM6XMsmwI",
+								"description": "Auth Token",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Tech Conference 2026\",\n    \"date\": \"2026-11-10\",\n    \"time\": \"09:00\",\n    \"location\": \"Convention Center\",\n    \"description\": \"Annual tech meetup\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/events",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"events"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Organized Events",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMWIwYTdjZi03OGIzLTQzNDItYjRiOS1mMzljN2M4MDhlYjUiLCJlbWFpbCI6Im9tYXIxQHRlc3QuY29tIiwicm9sZSI6Im9yZ2FuaXplciIsImlhdCI6MTc2NDM0NTMyNCwiZXhwIjoxNzY0OTUwMTI0fQ.FHDBX2qDEcaMzLx4k4mzWsl3UvVe810a5YmM6XMsmwI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/events/organized",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"events",
+								"organized"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Event",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMWIwYTdjZi03OGIzLTQzNDItYjRiOS1mMzljN2M4MDhlYjUiLCJlbWFpbCI6Im9tYXIxQHRlc3QuY29tIiwicm9sZSI6Im9yZ2FuaXplciIsImlhdCI6MTc2NDM0NTMyNCwiZXhwIjoxNzY0OTUwMTI0fQ.FHDBX2qDEcaMzLx4k4mzWsl3UvVe810a5YmM6XMsmwI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/events/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"events",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "04ecb54c-0546-4a11-9f92-ca9d64fac64a"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Invitations & Responses",
+			"item": [
+				{
+					"name": "Invite User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMWIwYTdjZi03OGIzLTQzNDItYjRiOS1mMzljN2M4MDhlYjUiLCJlbWFpbCI6Im9tYXIxQHRlc3QuY29tIiwicm9sZSI6Im9yZ2FuaXplciIsImlhdCI6MTc2NDM0NTMyNCwiZXhwIjoxNzY0OTUwMTI0fQ.FHDBX2qDEcaMzLx4k4mzWsl3UvVe810a5YmM6XMsmwI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"hisham@test.com\"\n\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/events/:id/invite",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"events",
+								":id",
+								"invite"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "fd284510-2582-4b8b-b63c-ceefab897c62"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Events I'm Invited To",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmMDZlZTcwMC00ODM2LTRjYzQtOThkNC1lMmRkZjQ1MzNhYzYiLCJlbWFpbCI6Imhpc2hhbUB0ZXN0LmNvbSIsInJvbGUiOiJhdHRlbmRlZSIsImlhdCI6MTc2NDM0NjYwNiwiZXhwIjoxNzY0OTUxNDA2fQ.SDmpRTz20ilIJ9ZolkvXk1tKMlVIWDlkdL7JBGj0Wh0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/events/invited",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"events",
+								"invited"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Respond to Event (Going/Maybe/Not Going)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmMDZlZTcwMC00ODM2LTRjYzQtOThkNC1lMmRkZjQ1MzNhYzYiLCJlbWFpbCI6Imhpc2hhbUB0ZXN0LmNvbSIsInJvbGUiOiJhdHRlbmRlZSIsImlhdCI6MTc2NDM0NzA3MCwiZXhwIjoxNzY0OTUxODcwfQ.ETJiSENgs5q_hbyP1q1u-CjWbD-AVDfqmHzEun2D1JM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmMDZlZTcwMC00ODM2LTRjYzQtOThkNC1lMmRkZjQ1MzNhYzYiLCJlbWFpbCI6Imhpc2hhbUB0ZXN0LmNvbSIsInJvbGUiOiJhdHRlbmRlZSIsImlhdCI6MTc2NDM0NjYwNiwiZXhwIjoxNzY0OTUxNDA2fQ.SDmpRTz20ilIJ9ZolkvXk1tKMlVIWDlkdL7JBGj0Wh0",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"Going\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/events/:id/respond",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"events",
+								":id",
+								"respond"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "fd284510-2582-4b8b-b63c-ceefab897c62"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "View Attendees List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMWIwYTdjZi03OGIzLTQzNDItYjRiOS1mMzljN2M4MDhlYjUiLCJlbWFpbCI6Im9tYXIxQHRlc3QuY29tIiwicm9sZSI6Im9yZ2FuaXplciIsImlhdCI6MTc2NDM0NTMyNCwiZXhwIjoxNzY0OTUwMTI0fQ.FHDBX2qDEcaMzLx4k4mzWsl3UvVe810a5YmM6XMsmwI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMWIwYTdjZi03OGIzLTQzNDItYjRiOS1mMzljN2M4MDhlYjUiLCJlbWFpbCI6Im9tYXIxQHRlc3QuY29tIiwicm9sZSI6Im9yZ2FuaXplciIsImlhdCI6MTc2NDM0NTMyNCwiZXhwIjoxNzY0OTUwMTI0fQ.FHDBX2qDEcaMzLx4k4mzWsl3UvVe810a5YmM6XMsmwI",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/events/:id/attendees",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"events",
+								":id",
+								"attendees"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "fd284510-2582-4b8b-b63c-ceefab897c62"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Search",
+			"item": [
+				{
+					"name": "Search Events",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMWIwYTdjZi03OGIzLTQzNDItYjRiOS1mMzljN2M4MDhlYjUiLCJlbWFpbCI6Im9tYXIxQHRlc3QuY29tIiwicm9sZSI6Im9yZ2FuaXplciIsImlhdCI6MTc2NDM0NTMyNCwiZXhwIjoxNzY0OTUwMTI0fQ.FHDBX2qDEcaMzLx4k4mzWsl3UvVe810a5YmM6XMsmwI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/events/search?keyword=Tech&role=organizer",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"events",
+								"search"
+							],
+							"query": [
+								{
+									"key": "keyword",
+									"value": "Tech",
+									"description": "Partial match on title/description"
+								},
+								{
+									"key": "role",
+									"value": "organizer",
+									"description": "organizer or attendee"
+								},
+								{
+									"key": "startDate",
+									"value": "2026-01-01",
+									"disabled": true
+								},
+								{
+									"key": "endDate",
+									"value": "2026-12-31",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

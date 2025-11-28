@@ -179,7 +179,7 @@ exports.searchEvents = async (req, res) => {
              CASE WHEN e.organizer_id = $1 THEN 'organizer' ELSE 'attendee' END as role
       FROM events e
       LEFT JOIN event_attendees ea ON e.event_id = ea.event_id
-      WHERE e.organizer_id = $1 OR ea.user_id = $1
+      WHERE (e.organizer_id = $1 OR ea.user_id = $1)
     `;
 
     const params = [req.user.userId];
@@ -190,16 +190,18 @@ exports.searchEvents = async (req, res) => {
       params.push(`%${keyword}%`);
       index++;
     }
+    
     if (startDate) {
-      query += ` AND e.date >= $${index}`;
+      query += ` AND e.date::date >= $${index}`; 
       params.push(startDate);
       index++;
     }
     if (endDate) {
-      query += ` AND e.date <= $${index}`;
+      query += ` AND e.date::date <= $${index}`;
       params.push(endDate);
       index++;
     }
+    
     if (role === "organizer") {
       query += ` AND e.organizer_id = $1`;
     } else if (role === "attendee") {

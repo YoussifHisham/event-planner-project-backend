@@ -19,7 +19,7 @@ router.post("/:event_id/invite", authorize, eventController.inviteUser);
 // DELETE /events/:id - [Delete an event]
 router.delete("/:id", authorize, eventController.deleteEvent);
 
-// POST /events/:id/respond - [Attendee updates their status] ← صح كده
+// POST /events/:id/respond - [Attendee updates their status] 
 router.post("/:id/respond", authorize, eventController.respondToEvent);
 
 // GET /events/:id/attendees - [Organizer views the list of people]
