@@ -9,12 +9,27 @@ const eventRoutes = require('./routes/events');
 const app = express();
 const PORT = 5000;
 
+
+const allowedOrigins = [
+  'http://localhost:5173',  // Local dev
+  'http://localhost:5174',  // Alternative local port
+  'https://event-planner-project-frontend-git-youssef-hisham-dev.apps.rm3.7wse.p1.openshiftapps.com',  // Production frontend
+];
 // --- Middleware ---
 // Enable Cross-Origin Resource Sharing (CORS)
 // This allows your React frontend to make requests to this backend
 
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   credentials: true
 }));
 // Parse incoming JSON requests
